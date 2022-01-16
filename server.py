@@ -1,15 +1,19 @@
 import asyncio
 import websockets
-import datetime
 import logging
+from datetime import datetime
 
 from ocpp.routing import on
 from ocpp.v16 import ChargePoint as cp
 from ocpp.v16.enums import *
 from ocpp.v16 import call_result, call
 
+#logger
 logging.getLogger('ocpp').setLevel(level=logging.DEBUG)
+#rejestrowanie danych wyjsciowych
+logging.getLogger('ocpp').addHandler(logging.StreamHandler()) 
 
+#config
 IP_ADDRESS = '0.0.0.0'
 PORT = 9000
 
@@ -28,6 +32,19 @@ class ChargePoint(cp):
             current_time=datetime.utcnow().isoformat()
         )
 
+    async def send_trigger_message(self):
+        request = call.TriggerMessagePayload(
+            message='BootNotification' 
+        )
+
+        response = await self.call(request)
+        if response.status == TriggerMessageStatus.accepted:
+            print("Trigger message will be sent.")
+
+        elif response.status == TriggerMessageStatus.rejected:
+            print("Trigger message will not be sent.")
+
+#nasluchiwanie
 async def on_connect(websocket, path):
     charge_point_id = path.strip('/')
     print(f'{charge_point_id} connected')
