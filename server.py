@@ -22,6 +22,12 @@ class ChargePoint(cp):
             status=RegistrationStatus.pending
         )
 
+    @on(Action.Heartbeat)
+    def on_heartbeat(self, **kwargs):
+        return call_result.HeartbeatPayload(
+            current_time=datetime.utcnow().isoformat()
+        )
+
 async def on_connect(websocket, path):
     charge_point_id = path.strip('/')
     print(f'{charge_point_id} connected')
