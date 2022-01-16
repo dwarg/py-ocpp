@@ -19,7 +19,7 @@ PORT = 9000
 
 class ChargePoint(cp):
     @on(Action.BootNotification)
-    def on_boot_notitication(self, charge_point_vendor, charge_point_model, **kwargs):
+    async def on_boot_notitication(self, charge_point_vendor, charge_point_model, **kwargs):
         return call_result.BootNotificationPayload(
             current_time=datetime.utcnow().isoformat(),
             interval=15,
@@ -32,6 +32,7 @@ class ChargePoint(cp):
             current_time=datetime.utcnow().isoformat()
         )
 
+    @on(Action.TriggerMessage)
     async def send_trigger_message(self):
         request = call.TriggerMessagePayload(
             message='BootNotification' 
