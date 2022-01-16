@@ -15,10 +15,13 @@ class ChargePoint(cp):
     async def send_boot_notification(self):
         request = call.BootNotificationPayload(
             charge_point_model="Test1",
-            charge_point_vendor="Test2"
+            charge_point_vendor="Test2",
+            firmware_version="69",
         )
 
         response = await self.call(request)
+        if response.status == RegistrationStatus.pending:
+            logging.info("Status: Pending (?)")
 
 async def main():
     async with websockets.connect(
