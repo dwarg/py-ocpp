@@ -24,9 +24,13 @@ class ChargePoint(cp):
             logging.info("Status: Pending (?)")
 
     async def send_heartbeat(self):
-        request = call.HeartbeatPayload()                              
-        await self.call(request)
-        await asyncio.sleep(10)
+        while True:
+            try:
+                request = call.HeartbeatPayload()                              
+                await self.call(request)
+                await asyncio.sleep(10)
+            except:
+                raise
 
 async def main():
     async with websockets.connect(
