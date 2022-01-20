@@ -21,12 +21,13 @@ class ChargePoint(cp):
         )
 
         response = await self.call(request)
-        if response.status == RegistrationStatus.pending:
+        if response.status == RegistrationStatus.accepted:
             logging.info(self.id + " accepted.")
             await self.send_heartbeat()
         if response.status == RegistrationStatus.rejected:
             logging.info(self.id + " rejected.")
-            await self.send_heartbeat()
+        if response.status == RegistrationStatus.pending:
+            logging.info(self.id + " pending.")
 
     async def send_heartbeat(self):
         while True:
@@ -34,7 +35,7 @@ class ChargePoint(cp):
                 request = call.HeartbeatPayload()                              
                 await self.call(request)
                 #pingowanie
-                await asyncio.sleep(10)
+                await asyncio.sleep(15)
             except:
                 raise
 
